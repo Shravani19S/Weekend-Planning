@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Events - Weekend Planner</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="events.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Upcoming Events</h1>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="gateway.html">Weekend Getaways</a>
+            <a href="budget.html">Budget-Friendly</a>
+            <a href="weather.html">Weather</a>
+            <a href="nearby.html">Nearby</a>
+            <a href="event.html">Events</a>
+            <a href="booking.html">Book Now</a>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="intro">
+            <h2>Exciting Events Coming Up!</h2>
+            <p>Discover local festivals, concerts, and activities happening this weekend.</p>
+        </section>
+
+        <!-- Events Section -->
+        <section class="cards">
+            <!-- Event 1 -->
+            <div class="card">
+                <h3>Music Concert</h3>
+                <p>Live music from local bands at the City Park. A night filled with great music, food trucks, and entertainment.</p>
+                <img src="images/concert.jpeg" alt="Music Concert">
+                <button class="book-btn" onclick="bookEvent('Music Concert')">Book Now</button>
+            </div>
+
+            <!-- Event 2 -->
+            <div class="card">
+                <h3>Food Festival</h3>
+                <p>A weekend-long celebration of local food vendors. Taste everything from street food to gourmet dishes.</p>
+                <img src="images/foodfestival.jpeg" alt="Food Festival">
+                <button class="book-btn" onclick="bookEvent('Food Festival')">Book Now</button>
+            </div>
+
+            <!-- Event 3 -->
+            <div class="card">
+                <h3>Outdoor Movie Night</h3>
+                <p>Bring your blanket and enjoy an outdoor screening of popular films. Great for families and friends.</p>
+                <img src="images/outmovie.jpeg" alt="Outdoor Movie Night">
+                <button class="book-btn" onclick="bookEvent('Outdoor Movie Night')">Book Now</button>
+            </div>
+        </section>
+
+        <section class="dynamic-events">
+            <h2>Upcoming Events</h2>
+            <ul id="events-list"></ul> <!-- Dynamic events will be displayed here -->
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Weekend Planner</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('http://localhost:5001/api/events')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayEvents(data); // Function to display the events on the page
+                })
+                .catch(error => {
+                    console.error('Error fetching events:', error);
+                });
+        });
+
+        function displayEvents(events) {
+            const eventsList = document.getElementById('events-list');
+            events.forEach(event => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <strong>${event.name}</strong>: ${event.description} at ${event.location} on ${event.date}
+                    <button class="book-btn" onclick="bookEvent('${encodeURIComponent(event.name)}', '${encodeURIComponent(event.description)}')">Book Now</button>
+                `;
+                eventsList.appendChild(listItem);
+            });
+        }
+
+        function bookEvent(eventName, eventDescription) {
+            // Redirect to the booking page with event details
+            window.location.href = `booking.html?event-name=${eventName}&event-description=${eventDescription}`;
+        }
+    </script>
+</body>
+</html>
